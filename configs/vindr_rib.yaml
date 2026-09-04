@@ -1,0 +1,130 @@
+data:
+  mode: multilabel
+  num_classes: 1
+  class_names: [rib]
+  ignore_background: false
+  train_image_dir: /3251903004/git_hub/dataset/VinDr_Rib_512/train/images
+  train_mask_dir: /3251903004/git_hub/dataset/VinDr_Rib_512/train/masks_binary
+  val_image_dir: /3251903004/git_hub/dataset/VinDr_Rib_512/val/images
+  val_mask_dir: /3251903004/git_hub/dataset/VinDr_Rib_512/val/masks_binary
+  test_image_dir: /3251903004/git_hub/dataset/VinDr_Rib_512/test/images
+  test_mask_dir: /3251903004/git_hub/dataset/VinDr_Rib_512/test/masks_binary
+  image_size: [512, 512]
+  in_channels: 1
+  threshold: 0.5
+  num_workers: 4
+  pin_memory: true
+  persistent_workers: true
+  prefetch_factor: 2
+augmentation:
+  hflip_p: 0.5
+  clahe_p: 0.4
+  gamma_p: 0.3
+  blur_p: 0.15
+  noise_p: 0.15
+  gamma_range: [0.7, 1.3]
+  blur_kernel: 5
+  noise_std: 0.04
+  elastic_p: 0.3
+  elastic_alpha: 80.0
+  elastic_sigma: 10.0
+  affine_p: 0.3
+  affine_rotate_limit: 5.0
+  affine_scale_range: [0.9, 1.1]
+  grid_distort_p: 0.2
+  grid_distort_limit: 0.2
+model:
+  task_mode: binary
+  num_classes: 1
+  region_num_classes: 8
+  relation_types: [disjoint, intersection]
+  encoder_type: pyramid_transformer
+  encoder_pretrained: false
+  embed_dim: 64
+  depths: [2, 2, 2, 2]
+  num_heads_pyramid: [2, 4, 8, 16]
+  common_dim: 192
+  decoder_dim: 160
+  transformer_depth: 2
+  num_heads: 8
+  window_size: 7
+  edge_tau: 2.0
+  channel_rank: 16
+  erga_hidden_dim: 128
+  use_prior_attention: true
+  use_edge_to_region_constraint: true
+  unet_base_channels: 32
+  classic_unet_base_channels: 64
+  alpha: 0.5
+  beta: 0.3
+  gamma: 0.3
+  inject_edge_skip: true
+  ablation:
+    disable_edge_branch: false
+    disable_region_branch: false
+    disable_overlap_prior: false
+    disable_region_to_edge_constraint: false
+    disable_erga: false
+    disable_lightweight_attention: false
+    disable_transformer: false
+    disable_prior_injection: false
+loss:
+  lambda_seg: 1.0
+  lambda_edge: 0.2
+  lambda_shared: 0.05
+  lambda_inner: 0.02
+  lambda_disjoint: 0.05
+  lambda_cons: 0.02
+  lambda_router: 0.01
+  lambda_boundary_dist: 0.1
+  lambda_sdm: 0.5
+  lambda_coarse_sdm: 0.2
+  lambda_curvature: 0
+  curvature_budgets: [0.15]
+  lambda_gate_entropy: 3.0e-4
+  lambda_gate_diversity: 0
+  lambda_boundary_focal: 1.0
+  boundary_focal_gamma: 2.0
+  boundary_focal_width: 5
+  lambda_direction: 0.05
+  lambda_topology: 0
+  lambda_adjacency: 0
+  pos_weight: auto
+  eps: 1.0e-6
+train:
+  epochs: 200
+  batch_size: 4
+  val_batch_size: 8
+  lr: 0.0001
+  weight_decay: 0.0001
+  warmup_epochs: 10
+  grad_clip: 1.0
+  accumulate_steps: 2
+  amp: true
+  device: cuda
+  multi_gpu: true
+  gpu_ids: [0, 1, 2, 3]
+  metrics_interval: 1
+  seed: 42
+  save_dir: checkpoints/vindr_rib
+  log_dir: logs/vindr_rib
+  csv_log_path: logs/vindr_rib/train_log.csv
+  best_metrics_path: checkpoints/vindr_rib/best_metrics.json
+  best_model_path: checkpoints/vindr_rib/best_model.pth
+  last_model_path: checkpoints/vindr_rib/last_model.pth
+  best_by: boundary_score
+  compile: false
+  early_stopping_patience: 25
+  early_stopping_min_delta: 2.0e-4
+  early_stopping_min_epochs: 80
+inference:
+  prediction_dir: predictions/vindr_rib
+  result_json: results/vindr_rib_metrics.json
+  save_color_mask: true
+  save_overlay: true
+  save_panel: true
+  overlay_alpha: 0.45
+  save_per_class: false
+  per_class_metrics: false
+  class_colors:
+    rib: [255, 180, 0]

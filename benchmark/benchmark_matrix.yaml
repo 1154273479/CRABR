@@ -1,0 +1,29 @@
+output_root: benchmark_runs
+
+datasets:
+  - name: jsrt_scr
+    config: configs/jsrt_scr.yaml
+  - name: vindr_rib
+    config: configs/vindr_rib.yaml
+
+models:
+  # --- CRABR (ours) ---
+  - crab
+
+  # --- 2024 Mamba / SSM series ---
+  - u_mamba
+  - vm_unet_v2
+  - msvm_unet
+  - segmamba
+
+  # --- 2024 dual-path / hybrid ---
+  - i2u_net
+  - dcm_net
+  - tbconvl_net
+  - cfm_unet
+  - kmunet
+
+  # --- Swin U-Net ---
+  - swin_unet
+
+seeds: [42]

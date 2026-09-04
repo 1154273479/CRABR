@@ -1,0 +1,180 @@
+data:
+  mode: multilabel
+  num_classes: 3
+  class_names:
+  - lung
+  - heart
+  - clavicle
+  ignore_background: false
+  train_image_dir: /3251903004/git_hub/dataset/JSRT_SCR_512/train/images
+  train_mask_dir: /3251903004/git_hub/dataset/JSRT_SCR_512/train/masks_3class
+  val_image_dir: /3251903004/git_hub/dataset/JSRT_SCR_512/val/images
+  val_mask_dir: /3251903004/git_hub/dataset/JSRT_SCR_512/val/masks_3class
+  test_image_dir: /3251903004/git_hub/dataset/JSRT_SCR_512/test/images
+  test_mask_dir: /3251903004/git_hub/dataset/JSRT_SCR_512/test/masks_3class
+  image_size:
+  - 512
+  - 512
+  in_channels: 1
+  threshold: 0.5
+  num_workers: 4
+  pin_memory: true
+  persistent_workers: true
+  prefetch_factor: 2
+augmentation:
+  hflip_p: 0.5
+  clahe_p: 0.3
+  gamma_p: 0.3
+  blur_p: 0.15
+  noise_p: 0.1
+  gamma_range:
+  - 0.8
+  - 1.25
+  blur_kernel: 5
+  noise_std: 0.03
+  elastic_p: 0.3
+  elastic_alpha: 80.0
+  elastic_sigma: 10.0
+  affine_p: 0.3
+  affine_rotate_limit: 10.0
+  affine_scale_range:
+  - 0.9
+  - 1.1
+  grid_distort_p: 0.2
+  grid_distort_limit: 0.25
+model:
+  task_mode: multilabel
+  num_classes: 3
+  region_num_classes: 16
+  relation_types:
+  - disjoint
+  - intersection
+  - containment
+  embed_dim: 64
+  depths:
+  - 2
+  - 2
+  - 2
+  - 2
+  num_heads_pyramid:
+  - 2
+  - 4
+  - 8
+  - 16
+  common_dim: 192
+  decoder_dim: 160
+  transformer_depth: 2
+  num_heads: 8
+  window_size: 7
+  edge_tau: 2.0
+  channel_rank: 16
+  erga_hidden_dim: 128
+  use_prior_attention: true
+  use_edge_to_region_constraint: true
+  unet_base_channels: 32
+  classic_unet_base_channels: 64
+  alpha: 0.5
+  beta: 0.3
+  gamma: 0.3
+  inject_edge_skip: true
+  ablation:
+    disable_edge_branch: false
+    disable_region_branch: false
+    disable_overlap_prior: false
+    disable_region_to_edge_constraint: false
+    disable_erga: false
+    disable_lightweight_attention: false
+    disable_transformer: false
+    disable_prior_injection: false
+loss:
+  lambda_seg: 1.0
+  lambda_edge: 0.2
+  lambda_shared: 0.05
+  lambda_inner: 0.02
+  lambda_disjoint: 0.05
+  lambda_cons: 0.02
+  lambda_router: 0.01
+  lambda_boundary_dist: 0.1
+  lambda_sdm: 0.5
+  lambda_coarse_sdm: 0.2
+  lambda_curvature: 0
+  curvature_budgets:
+  - 0.15
+  - 0.08
+  - 0.3
+  lambda_gate_entropy: 0.0003
+  lambda_gate_diversity: 0
+  lambda_boundary_focal: 1.0
+  boundary_focal_gamma: 2.0
+  boundary_focal_width: 5
+  lambda_direction: 0.05
+  lambda_topology: 0
+  topology_tau: 2.0
+  lambda_adjacency: 0.05
+  adjacency_pairs:
+  - - 0
+    - 1
+  adjacency_boundary_width: 3.0
+  containment_hierarchy:
+  - - 0
+    - 2
+  lambda_edge_consistency: 0
+  lambda_uncertainty: 0
+  lambda_unc_seg: 0
+  anatomy_boundary_boost:
+  - 1.0
+  - 3.0
+  - 1.5
+  pos_weight: auto
+  eps: 1.0e-06
+train:
+  epochs: 200
+  batch_size: 4
+  val_batch_size: 8
+  lr: 0.0001
+  weight_decay: 0.0001
+  warmup_epochs: 2
+  grad_clip: 1.0
+  accumulate_steps: 2
+  amp: true
+  device: cuda
+  multi_gpu: true
+  gpu_ids:
+  - 0
+  - 1
+  - 2
+  - 3
+  metrics_interval: 1
+  early_stopping_patience: 25
+  early_stopping_min_delta: 2.0e-4
+  early_stopping_min_epochs: 80
+  seed: 42
+  save_dir: checkpoints
+  log_dir: logs/tensorboard
+  csv_log_path: logs/train_log.csv
+  best_metrics_path: checkpoints/best_metrics.json
+  best_model_path: checkpoints/best_model.pth
+  last_model_path: checkpoints/last_model.pth
+  best_by: boundary_score
+inference:
+  prediction_dir: predictions
+  result_json: results/test_metrics.json
+  save_color_mask: true
+  save_overlay: true
+  save_panel: true
+  overlay_alpha: 0.45
+  save_per_class: true
+  per_class_metrics: true
+  class_colors:
+    lung:
+    - 230
+    - 25
+    - 75
+    heart:
+    - 0
+    - 130
+    - 200
+    clavicle:
+    - 245
+    - 130
+    - 48
