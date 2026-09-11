@@ -34,6 +34,8 @@ augmentation:
   grid_distort_p: 0.2
   grid_distort_limit: 0.2
 model:
+  # Main model: CRABR.
+  variant: crabr
   task_mode: binary
   num_classes: 1
   region_num_classes: 8
@@ -43,8 +45,8 @@ model:
   embed_dim: 64
   depths: [2, 2, 2, 2]
   num_heads_pyramid: [2, 4, 8, 16]
-  common_dim: 192
-  decoder_dim: 160
+  common_dim: 128
+  decoder_dim: 128
   transformer_depth: 2
   num_heads: 8
   window_size: 7
@@ -52,7 +54,7 @@ model:
   channel_rank: 16
   erga_hidden_dim: 128
   use_prior_attention: true
-  use_edge_to_region_constraint: true
+  use_edge_to_region_constraint: false
   unet_base_channels: 32
   classic_unet_base_channels: 64
   alpha: 0.5
@@ -63,7 +65,7 @@ model:
     disable_edge_branch: false
     disable_region_branch: false
     disable_overlap_prior: false
-    disable_region_to_edge_constraint: false
+    disable_region_to_edge_constraint: true
     disable_erga: false
     disable_lightweight_attention: false
     disable_transformer: false

@@ -1,6 +1,6 @@
 # CRABR 项目文档
 
-CRABR (Cross-level Relation-Aware Boundary Reasoning) 是一个用于医学图像分割的深度学习模型，专注于头颅侧位片等医学影像分析任务。
+CRABR (Cross-level Relation-Aware Boundary Reasoning) 是一个用于医学图像分割的深度学习模型，专注于头颅侧位片等医学影像分析任务。默认主模型为 **CRABR**：共享特征与解码器宽度均为 128，并关闭双向区域—边缘约束；其余边缘、区域、ERGA 和几何先验路径保持启用。
 
 ## 项目结构
 
@@ -146,6 +146,8 @@ python -m benchmark.run_benchmark --stage summary
 ```
 
 ### 4. 单独训练/推理
+
+默认配置已使用 CRABR 主模型参数，无需额外的模型参数。当前主模型的通道数与旧版 Full CRABR 不同，旧版 checkpoint 不能直接加载；请重新训练。
 
 ```bash
 # 训练
